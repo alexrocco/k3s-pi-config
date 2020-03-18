@@ -1,5 +1,7 @@
 # k3s Pi Config tool
 
+[![codecov](https://codecov.io/gh/alexrocco/k3s-pi-config/branch/master/graph/badge.svg)](https://codecov.io/gh/alexrocco/k3s-pi-config)
+
 k3s-pi-config is a configure tool to deploy and manage Kubernetes cluster, using k3s (https://k3s.io), on Raspberry Pi devices.
 
 ## Architecture
