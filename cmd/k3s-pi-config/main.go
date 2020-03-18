@@ -1,7 +1,16 @@
 package main
 
-import "github.com/alexrocco/k3s-pi-config/internal/cmd"
+import (
+	"fmt"
+	"github.com/alexrocco/k3s-pi-config/internal/cmd"
+	"os"
+)
 
 func main() {
-	cmd.Execute()
+	rootCmd := cmd.NewRoot()
+
+	if err := rootCmd.Command().Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
