@@ -26,7 +26,12 @@ jobs:
       run: go get -v -t -d ./...
     
     - name: Test
-      run: go test ./...
-      
+      run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+    - name: Upload coverage to https://codecov.io/\
+      env:
+        codecov_token: ${{ secrets.CODECOV_TOKEN }}
+      run: bash <(curl -s https://codecov.io/bash) -t $codecov_token
+
     - name: Build
       run: go build -v ./cmd/k3s-pi-config/main.go
