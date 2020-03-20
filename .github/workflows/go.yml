@@ -11,6 +11,12 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    services:
+      mock-ssh:
+        image: alexxrocco/mock-ssh
+        ports:
+          - 2222:2222
+  
     steps:
 
     - name: Set up Go 1.13
@@ -27,12 +33,6 @@ jobs:
     
     - name: Test
       run: MOCK_SSH_HOST=mock-ssh go test -race -coverprofile=coverage.txt -covermode=atomic ./...
-
-      services:
-        mock-ssh:
-          image: alexxrocco/mock-ssh
-          ports:
-            - 2222:2222
 
     - name: Upload coverage to https://codecov.io/\
       env:
