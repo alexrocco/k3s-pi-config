@@ -26,7 +26,13 @@ jobs:
       run: go get -v -t -d ./...
     
     - name: Test
-      run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+      run: MOCK_SSH_HOST=mock-ssh go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+      services:
+        mock-ssh:
+          image: alexxrocco/mock-ssh
+          ports:
+            - 2222:2222
 
     - name: Upload coverage to https://codecov.io/\
       env:
