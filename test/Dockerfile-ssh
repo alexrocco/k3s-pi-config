@@ -1,0 +1,13 @@
+FROM ubuntu:18.04
+
+RUN adduser unit-test && \
+    echo "unit-test:test" | chpasswd && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends ssh && \
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config && \
+    sed -i 's/#Port 22/Port 2222/g' /etc/ssh/sshd_config && \
+    mkdir -p /var/run/sshd
+
+EXPOSE 2222
+
+CMD ["/usr/sbin/sshd", "-D"]
