@@ -10,7 +10,7 @@ import (
 func TestNewUserPassword(t *testing.T) {
 	executor := NewUserPassword("test", 22, "test", "test", logrus.New())
 
-	if executor != nil {
+	if executor == nil {
 		t.Error("Executor should be different then nil")
 	}
 }
