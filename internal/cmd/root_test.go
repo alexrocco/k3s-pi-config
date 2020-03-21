@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 	"testing"
 )
@@ -23,17 +22,35 @@ func TestRoot_Command(t *testing.T) {
 		rootCmd := NewRootTest(&output)
 
 		cmd := rootCmd.Command()
-		_ = cmd.Flags().Set("unit-test", "true")
+
+		_ = cmd.Flags().Set("host", "localhost")
+		_ = cmd.Flags().Set("port", "22")
+		_ = cmd.Flags().Set("user", "user")
+		_ = cmd.Flags().Set("password", "password")
 
 		err := cmd.Execute()
 		if err != nil {
-			fmt.Println(err)
-			t.Error("err should not be nil")
+			t.Error("err should not be nil, got: ", err)
 		}
 
 		if !strings.Contains(output.String(), rootMsg) {
-			fmt.Println(output.String())
 			t.Error("root message not found in the output")
+		}
+	})
+
+	t.Run("Root command should fail when a required flag is not set", func(t *testing.T) {
+		rootCmd := NewRoot()
+
+		cmd := rootCmd.Command()
+
+		// Missing host flag
+		_ = cmd.Flags().Set("port", "22")
+		_ = cmd.Flags().Set("user", "user")
+		_ = cmd.Flags().Set("password", "password")
+
+		err := cmd.Execute()
+		if err == nil {
+			t.Error("err should not be nil")
 		}
 	})
 }
