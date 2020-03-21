@@ -15,10 +15,9 @@ jobs:
       ssh:
         image: alexxrocco/mock-ssh
         ports:
-          - 2222:2222
+          - 8080:2222
 
     steps:
-
     - name: Set up Go 1.13
       uses: actions/setup-go@v1
       with:
@@ -34,6 +33,7 @@ jobs:
     - name: Test
       env:
         MOCK_SSH_HOST: ssh
+        MOCK_SSH_PORT: 8080
       run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
     - name: Upload coverage to https://codecov.io/\

@@ -4,6 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"os"
 	"reflect"
+	"strconv"
 	"testing"
 )
 
@@ -20,6 +21,17 @@ func TestUserPassword_Execute(t *testing.T) {
 	sshHost := os.Getenv("MOCK_SSH_HOST")
 	if len(sshHost) == 0 {
 		sshHost = "localhost"
+	}
+
+	sshPortStr := os.Getenv("MOCK_SSH_PORT")
+	sshPort := uint(2222)
+	if len(sshPortStr) > 0 {
+		sshPort64, err := strconv.ParseUint(sshPortStr, 10, 32)
+		if err != nil {
+			t.Error("error converting MOCK_SSH_PORT variable to uint")
+		}
+
+		sshPort = uint(sshPort64)
 	}
 
 	type fields struct {
@@ -60,7 +72,7 @@ func TestUserPassword_Execute(t *testing.T) {
 			name: "It should return the text of a echo command",
 			fields: fields{
 				host:     sshHost,
-				port:     2222,
+				port:     sshPort,
 				user:     "unit-test",
 				password: "test",
 				log:      logrus.New(),
@@ -76,7 +88,7 @@ func TestUserPassword_Execute(t *testing.T) {
 			name: "It should fail when executing a command not found",
 			fields: fields{
 				host:     sshHost,
-				port:     2222,
+				port:     sshPort,
 				user:     "unit-test",
 				password: "test",
 				log:      logrus.New(),
