@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/alexrocco/k3s-pi-config/internal/configpi"
 	"github.com/alexrocco/k3s-pi-config/internal/log"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -10,28 +11,34 @@ import (
 
 const (
 	nodeNotDefinedMsg = "node not defined, please use 'server' or 'agent'"
-	wrongNodeMsg = "Wrong node defined, please use 'server' or 'agent'"
+	wrongNodeMsg      = "Wrong node defined, please use 'server' or 'agent'"
 )
 
 // NewConfig creates the config command
 func NewConfig() Commander {
 	customLog := logrus.New()
 	customLog.Formatter = &log.CustomFormatter{Command: "config"}
-	return &config{log: customLog}
+
+	configpiFactory := configpi.NewFactory()
+
+	return &config{log: customLog, configpiFactory: configpiFactory}
 }
 
 // NewConfigTest creates a config command with a custom output to be used on unit tests
-func NewConfigTest(out io.Writer) Commander {
+func NewConfigTest(out io.Writer, configpiFactory configpi.Factory) Commander {
 	customLog := logrus.New()
 	customLog.Out = out
 	customLog.Formatter = &log.CustomFormatter{Command: "config"}
-	return &config{log: customLog}
+
+	return &config{log: customLog, configpiFactory: configpiFactory}
 }
 
 type config struct {
-	log        *logrus.Logger
 	nodeType   string
 	isUnitTest bool
+
+	configpiFactory configpi.Factory
+	log             *logrus.Logger
 }
 
 func (c *config) Command() *cobra.Command {
