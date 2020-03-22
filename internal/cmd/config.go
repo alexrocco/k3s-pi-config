@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	nodeNotDefinedMsg = "node not defined, please use 'server' or 'agent'"
+	nodeNotDefinedMsg = "Node not defined, please use 'server' or 'agent'"
 	wrongNodeMsg      = "Wrong node defined, please use 'server' or 'agent'"
+	configErrorMsg    = "Error while configuring '%s': %v "
 )
 
 // NewConfig creates the config command
@@ -34,6 +35,7 @@ func NewConfigTest(out io.Writer, configpiFactory configpi.Factory) Commander {
 }
 
 type config struct {
+	flags      flags
 	nodeType   string
 	isUnitTest bool
 
@@ -62,6 +64,7 @@ func (c *config) run(cmd *cobra.Command, args []string) {
 
 	if len(c.nodeType) == 0 {
 		c.log.Error(nodeNotDefinedMsg)
+
 		if c.isUnitTest {
 			return
 		} else {
@@ -69,11 +72,21 @@ func (c *config) run(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	switch c.nodeType {
-	case "server":
-	case "agent":
-	default:
+	config := c.configpiFactory.Configuration(c.nodeType)
+	if config == nil {
 		c.log.Error(wrongNodeMsg)
+
+		if c.isUnitTest {
+			return
+		} else {
+			os.Exit(1)
+		}
+	}
+
+	err := config.Configure(c.flags.host, c.flags.port, c.flags.user, c.flags.password)
+	if err != nil {
+		c.log.Errorf(configErrorMsg, c.nodeType, err)
+
 		if c.isUnitTest {
 			return
 		} else {

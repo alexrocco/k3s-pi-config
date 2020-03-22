@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"github.com/alexrocco/k3s-pi-config/internal/configpi"
 	"github.com/stretchr/testify/mock"
 	"strings"
@@ -9,7 +11,10 @@ import (
 )
 
 type (
-	mockFactory struct{}
+	mockFactory struct {
+		mockServer *mockServer
+		mockAgent  *mockAgent
+	}
 
 	mockServer struct {
 		mock.Mock
@@ -23,9 +28,9 @@ type (
 func (mf *mockFactory) Configuration(nodeType string) configpi.Configuration {
 	switch nodeType {
 	case "server":
-		return &mockServer{}
+		return mf.mockServer
 	case "agent":
-		return &mockAgent{}
+		return mf.mockAgent
 	default:
 		return nil
 	}
@@ -90,7 +95,16 @@ func TestConfig_run(t *testing.T) {
 
 	t.Run("Run should work when the node type is 'agent'", func(t *testing.T) {
 		var output bytes.Buffer
-		configCmd := NewConfigTest(&output, &mockFactory{})
+		var mockAgent mockAgent
+
+		mockAgent.On("Configure",
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("uint"),
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("string")).
+			Return(nil)
+
+		configCmd := NewConfigTest(&output, &mockFactory{mockAgent: &mockAgent})
 
 		cmd := configCmd.Command()
 		_ = cmd.Flags().Set("unit-test", "true")
@@ -101,6 +115,8 @@ func TestConfig_run(t *testing.T) {
 			t.Error("err should not be nil")
 		}
 
+		mockAgent.AssertNumberOfCalls(t,  "Configure", 1)
+
 		if strings.Contains(output.String(), wrongNodeMsg) || strings.Contains(output.String(), wrongNodeMsg) {
 			t.Error("validations outputs shouldn't be logged")
 		}
@@ -108,7 +124,16 @@ func TestConfig_run(t *testing.T) {
 
 	t.Run("Run should work when the node type is 'server'", func(t *testing.T) {
 		var output bytes.Buffer
-		configCmd := NewConfigTest(&output, &mockFactory{})
+		var mockServer mockServer
+
+		mockServer.On("Configure",
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("uint"),
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("string")).
+			Return(nil)
+
+		configCmd := NewConfigTest(&output, &mockFactory{mockServer: &mockServer})
 
 		cmd := configCmd.Command()
 		_ = cmd.Flags().Set("unit-test", "true")
@@ -119,8 +144,42 @@ func TestConfig_run(t *testing.T) {
 			t.Error("err should not be nil")
 		}
 
+		mockServer.AssertNumberOfCalls(t,  "Configure", 1)
+
 		if strings.Contains(output.String(), wrongNodeMsg) || strings.Contains(output.String(), wrongNodeMsg) {
 			t.Error("validations outputs shouldn't be logged")
+		}
+	})
+
+	t.Run("Run should fail when configure process fails", func(t *testing.T) {
+		var output bytes.Buffer
+		var mockServer mockServer
+
+		nodeType := "server"
+		mockErr := errors.New("mock error")
+
+		mockServer.On("Configure",
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("uint"),
+			mock.AnythingOfType("string"),
+			mock.AnythingOfType("string")).
+			Return(mockErr)
+
+		configCmd := NewConfigTest(&output, &mockFactory{mockServer: &mockServer})
+
+		cmd := configCmd.Command()
+		_ = cmd.Flags().Set("unit-test", "true")
+		_ = cmd.Flags().Set("node", nodeType)
+
+		err := cmd.Execute()
+		if err != nil {
+			t.Error("err should be nil")
+		}
+
+		mockServer.AssertNumberOfCalls(t,  "Configure", 1)
+
+		if !strings.Contains(output.String(), fmt.Sprintf(configErrorMsg, nodeType, mockErr)) {
+			t.Error("wrong error message")
 		}
 	})
 }
