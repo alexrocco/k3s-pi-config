@@ -1,9 +1,12 @@
 package configpi
 
+// Factory creates a Configuration depending on nodeType
 type Factory interface {
+	// Configuration creates a Configuration depending on nodeType
 	Configuration(nodeType string) Configuration
 }
 
+// NewFactory creates a Factory for Configuration
 func NewFactory() Factory {
 	return &factory{}
 }

@@ -2,9 +2,44 @@ package cmd
 
 import (
 	"bytes"
+	"github.com/alexrocco/k3s-pi-config/internal/configpi"
+	"github.com/stretchr/testify/mock"
 	"strings"
 	"testing"
 )
+
+type (
+	mockFactory struct{}
+
+	mockServer struct {
+		mock.Mock
+	}
+
+	mockAgent struct {
+		mock.Mock
+	}
+)
+
+func (mf *mockFactory) Configuration(nodeType string) configpi.Configuration {
+	switch nodeType {
+	case "server":
+		return &mockServer{}
+	case "agent":
+		return &mockAgent{}
+	default:
+		return nil
+	}
+}
+
+func (ms *mockServer) Configure(host string, port uint, user, password string) error {
+	args := ms.Called(host, port, user, password)
+	return args.Error(0)
+}
+
+func (ma *mockAgent) Configure(host string, port uint, user, password string) error {
+	args := ma.Called(host, port, user, password)
+	return args.Error(0)
+}
 
 func TestConfig_Command(t *testing.T) {
 	configCmd := NewConfig()
@@ -19,7 +54,7 @@ func TestConfig_Command(t *testing.T) {
 func TestConfig_run(t *testing.T) {
 	t.Run("Run should output when node flag is empty", func(t *testing.T) {
 		var output bytes.Buffer
-		configCmd := NewConfigTest(&output)
+		configCmd := NewConfigTest(&output, &mockFactory{})
 
 		cmd := configCmd.Command()
 		_ = cmd.Flags().Set("unit-test", "true")
@@ -37,7 +72,7 @@ func TestConfig_run(t *testing.T) {
 
 	t.Run("Run should output when node value is wrong", func(t *testing.T) {
 		var output bytes.Buffer
-		configCmd := NewConfigTest(&output)
+		configCmd := NewConfigTest(&output, &mockFactory{})
 
 		cmd := configCmd.Command()
 		_ = cmd.Flags().Set("unit-test", "true")
@@ -55,7 +90,7 @@ func TestConfig_run(t *testing.T) {
 
 	t.Run("Run should work when the node type is 'agent'", func(t *testing.T) {
 		var output bytes.Buffer
-		configCmd := NewConfigTest(&output)
+		configCmd := NewConfigTest(&output, &mockFactory{})
 
 		cmd := configCmd.Command()
 		_ = cmd.Flags().Set("unit-test", "true")
@@ -73,7 +108,7 @@ func TestConfig_run(t *testing.T) {
 
 	t.Run("Run should work when the node type is 'server'", func(t *testing.T) {
 		var output bytes.Buffer
-		configCmd := NewConfigTest(&output)
+		configCmd := NewConfigTest(&output, &mockFactory{})
 
 		cmd := configCmd.Command()
 		_ = cmd.Flags().Set("unit-test", "true")
