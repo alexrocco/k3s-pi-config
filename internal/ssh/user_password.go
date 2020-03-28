@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/alexrocco/k3s-pi-config/internal/log"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
+	"io"
 	"net"
 )
 
@@ -59,18 +61,25 @@ func (up *UserPassword) Execute(command string) ([]byte, []byte, error) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 
-	session.Stdout = &stdout
-	session.Stderr = &stderr
+	logInfoWriter := log.Writer{
+		Logger: up.log,
+		Level:  logrus.InfoLevel,
+	}
 
-	up.log.Infof("Command over ssh - %s", command)
+	logErrorWriter := log.Writer{
+		Logger: up.log,
+		Level:  logrus.DebugLevel,
+	}
+
+	session.Stdout = io.MultiWriter(&stdout, &logInfoWriter)
+	session.Stderr = io.MultiWriter(&stderr, &logErrorWriter)
+
+	up.log.Infof("SSH cmd: '%s'", command)
 
 	err = session.Run(command)
 	if err != nil {
 		return stdout.Bytes(), stderr.Bytes(), err
 	}
-
-	up.log.Infof("Stdout - %s", stdout.String())
-	up.log.Infof("Stderr - %s", stderr.String())
 
 	return stdout.Bytes(), stderr.Bytes(), nil
 }

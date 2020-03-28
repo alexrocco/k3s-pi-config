@@ -94,7 +94,7 @@ func TestCustomFormatter_Format(t *testing.T) {
 		},
 
 		{
-			name: "Test invalid log level",
+			name: "Test invalid log Level",
 			args: arg{
 				message:  "test message",
 				command:  "test",
@@ -136,7 +136,7 @@ func TestCustomFormatter_Format(t *testing.T) {
 				}
 			}()
 
-			// Set the time and level to the log
+			// Set the time and Level to the log
 			testLog.WithTime(logTime).Log(tt.args.logLevel, tt.args.message)
 
 			validLogMsg()
