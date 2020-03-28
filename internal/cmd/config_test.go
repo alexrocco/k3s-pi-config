@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/alexrocco/k3s-pi-config/internal/configpi"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
 	"strings"
 	"testing"
@@ -25,7 +26,7 @@ type (
 	}
 )
 
-func (mf *mockFactory) Configuration(nodeType string) configpi.Configuration {
+func (mf *mockFactory) Configuration(nodeType string, log *logrus.Logger) configpi.Configuration {
 	switch nodeType {
 	case "server":
 		return mf.mockServer
@@ -47,7 +48,7 @@ func (ma *mockAgent) Configure(host string, port uint, user, password string) er
 }
 
 func TestConfig_Command(t *testing.T) {
-	configCmd := NewConfig()
+	configCmd := NewConfig(&flags{})
 
 	cmd := configCmd.Command()
 

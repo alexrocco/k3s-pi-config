@@ -16,13 +16,13 @@ const (
 )
 
 // NewConfig creates the config command
-func NewConfig() Commander {
+func NewConfig(flags *flags) Commander {
 	customLog := logrus.New()
 	customLog.Formatter = &log.CustomFormatter{Command: "config"}
 
 	configpiFactory := configpi.NewFactory()
 
-	return &config{log: customLog, configpiFactory: configpiFactory}
+	return &config{log: customLog, configpiFactory: configpiFactory, flags: flags}
 }
 
 // NewConfigTest creates a config command with a custom output to be used on unit tests
@@ -35,7 +35,7 @@ func NewConfigTest(out io.Writer, configpiFactory configpi.Factory) Commander {
 }
 
 type config struct {
-	flags      flags
+	flags      *flags
 	nodeType   string
 	isUnitTest bool
 
@@ -72,7 +72,7 @@ func (c *config) run(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	config := c.configpiFactory.Configuration(c.nodeType)
+	config := c.configpiFactory.Configuration(c.nodeType, c.log)
 	if config == nil {
 		c.log.Error(wrongNodeMsg)
 

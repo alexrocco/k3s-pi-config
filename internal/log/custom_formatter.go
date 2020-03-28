@@ -22,7 +22,7 @@ type CustomFormatter struct {
 }
 
 func (cf *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-	// Define log level colors and level text
+	// Define log Level colors and Level text
 	var levelColor int
 	var levelText string
 	switch entry.Level {

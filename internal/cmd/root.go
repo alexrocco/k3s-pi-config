@@ -49,14 +49,14 @@ func (r *root) Command() *cobra.Command {
 	}
 
 	// Flags
-	rootCmd.Flags().StringVarP(&r.flags.host, "host", "H", "", "host name")
-	rootCmd.Flags().UintVarP(&r.flags.port, "port", "P", 0, "port")
-	rootCmd.Flags().StringVarP(&r.flags.user, "user", "u", "", "username")
-	rootCmd.Flags().StringVarP(&r.flags.password, "password", "p", "", "password")
+	rootCmd.PersistentFlags().StringVarP(&r.flags.host, "host", "H", "", "host name")
+	rootCmd.PersistentFlags().UintVarP(&r.flags.port, "port", "P", 0, "port")
+	rootCmd.PersistentFlags().StringVarP(&r.flags.user, "user", "u", "", "username")
+	rootCmd.PersistentFlags().StringVarP(&r.flags.password, "password", "p", "", "password")
 
 	// Set all flags as required
 	for _, flag := range []string{"host", "port", "user", "password"} {
-		err := rootCmd.MarkFlagRequired(flag)
+		err := rootCmd.MarkPersistentFlagRequired(flag)
 		if err != nil {
 			r.log.Errorf(fmt.Sprintf(flagNotDefinedMsg, flag), err)
 			return nil
@@ -71,6 +71,6 @@ func (r *root) Command() *cobra.Command {
 
 func (r *root) addCommands(cmd *cobra.Command) {
 	// Config
-	configCmd := NewConfig()
+	configCmd := NewConfig(&r.flags)
 	cmd.AddCommand(configCmd.Command())
 }
