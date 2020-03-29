@@ -2,9 +2,10 @@ package log
 
 import (
 	"bytes"
-	"github.com/sirupsen/logrus"
 	"testing"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 func TestCustomFormatter_Format(t *testing.T) {

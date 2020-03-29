@@ -1,11 +1,12 @@
 package ssh
 
 import (
-	"github.com/sirupsen/logrus"
 	"os"
 	"reflect"
 	"strconv"
 	"testing"
+
+	"github.com/sirupsen/logrus"
 )
 
 func TestNewUserPassword(t *testing.T) {

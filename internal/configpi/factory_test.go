@@ -1,15 +1,16 @@
 package configpi
 
 import (
-	"github.com/sirupsen/logrus"
 	"reflect"
 	"testing"
+
+	"github.com/sirupsen/logrus"
 )
 
 func Test_factory_Configuration(t *testing.T) {
 	type args struct {
 		nodeType string
-		log      logrus.Logger
+		log      *logrus.Logger
 	}
 	tests := []struct {
 		name string
@@ -20,7 +21,7 @@ func Test_factory_Configuration(t *testing.T) {
 			name: "Server configuration should return when nodeType is server",
 			args: args{
 				nodeType: "server",
-				log:      *logrus.New(),
+				log:      logrus.New(),
 			},
 			want: &Server{},
 		},
@@ -28,7 +29,7 @@ func Test_factory_Configuration(t *testing.T) {
 			name: "Agent configuration should return when nodeType is agent",
 			args: args{
 				nodeType: "agent",
-				log:      *logrus.New(),
+				log:      logrus.New(),
 			},
 			want: &Agent{},
 		},
@@ -36,7 +37,7 @@ func Test_factory_Configuration(t *testing.T) {
 			name: "No configuration should return when nodeType is invalid",
 			args: args{
 				nodeType: "",
-				log:      *logrus.New(),
+				log:      logrus.New(),
 			},
 			want: nil,
 		},

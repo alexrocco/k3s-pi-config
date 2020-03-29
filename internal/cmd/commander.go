@@ -14,5 +14,4 @@ type flags struct {
 	port     uint
 	user     string
 	password string
-
 }

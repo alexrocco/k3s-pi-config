@@ -1,12 +1,13 @@
 package cmd
 
 import (
+	"io"
+	"os"
+
 	"github.com/alexrocco/k3s-pi-config/internal/configpi"
 	"github.com/alexrocco/k3s-pi-config/internal/log"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"io"
-	"os"
 )
 
 const (
@@ -67,9 +68,9 @@ func (c *config) run(cmd *cobra.Command, args []string) {
 
 		if c.isUnitTest {
 			return
-		} else {
-			os.Exit(1)
 		}
+
+		os.Exit(1)
 	}
 
 	config := c.configpiFactory.Configuration(c.nodeType, c.log)
@@ -78,9 +79,9 @@ func (c *config) run(cmd *cobra.Command, args []string) {
 
 		if c.isUnitTest {
 			return
-		} else {
-			os.Exit(1)
 		}
+
+		os.Exit(1)
 	}
 
 	err := config.Configure(c.flags.host, c.flags.port, c.flags.user, c.flags.password)
@@ -89,8 +90,8 @@ func (c *config) run(cmd *cobra.Command, args []string) {
 
 		if c.isUnitTest {
 			return
-		} else {
-			os.Exit(1)
 		}
+
+		os.Exit(1)
 	}
 }

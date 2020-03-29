@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"io"
+
 	"github.com/alexrocco/k3s-pi-config/internal/log"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"io"
 )
 
 const (
@@ -13,6 +14,7 @@ const (
 	flagNotDefinedMsg = "Error marking flags '%s' as required: "
 )
 
+// NewRoot creates the root Commander
 func NewRoot() Commander {
 	customLog := logrus.New()
 	customLog.Formatter = &log.CustomFormatter{Command: "root"}
