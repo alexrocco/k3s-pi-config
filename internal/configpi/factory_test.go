@@ -10,6 +10,7 @@ import (
 func Test_factory_Configuration(t *testing.T) {
 	type args struct {
 		nodeType string
+		input    Input
 		log      *logrus.Logger
 	}
 	tests := []struct {
@@ -21,6 +22,7 @@ func Test_factory_Configuration(t *testing.T) {
 			name: "Server configuration should return when nodeType is server",
 			args: args{
 				nodeType: "server",
+				input:    Input{},
 				log:      logrus.New(),
 			},
 			want: &Server{},
@@ -29,7 +31,9 @@ func Test_factory_Configuration(t *testing.T) {
 			name: "Agent configuration should return when nodeType is agent",
 			args: args{
 				nodeType: "agent",
-				log:      logrus.New(),
+				input:    Input{},
+
+				log: logrus.New(),
 			},
 			want: &Agent{},
 		},
@@ -37,6 +41,7 @@ func Test_factory_Configuration(t *testing.T) {
 			name: "No configuration should return when nodeType is invalid",
 			args: args{
 				nodeType: "",
+				input:    Input{},
 				log:      logrus.New(),
 			},
 			want: nil,
@@ -45,7 +50,7 @@ func Test_factory_Configuration(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := NewFactory()
-			if got := f.Configuration(tt.args.nodeType, tt.args.log); reflect.TypeOf(got) != reflect.TypeOf(tt.want) {
+			if got := f.Configuration(tt.args.nodeType, tt.args.input, tt.args.log); reflect.TypeOf(got) != reflect.TypeOf(tt.want) {
 				t.Errorf("Configuration() = %v, want %v", got, tt.want)
 			}
 		})

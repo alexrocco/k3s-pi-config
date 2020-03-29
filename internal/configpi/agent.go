@@ -7,6 +7,6 @@ func NewAgent() Configuration {
 type Agent struct {
 }
 
-func (s *Agent) Configure(host string, port uint, user, password string) error {
+func (s *Agent) Configure() error {
 	return nil
 }

@@ -27,7 +27,7 @@ type (
 	}
 )
 
-func (mf *mockFactory) Configuration(nodeType string, log *logrus.Logger) configpi.Configuration {
+func (mf *mockFactory) Configuration(nodeType string, input configpi.Input, log *logrus.Logger) configpi.Configuration {
 	switch nodeType {
 	case "server":
 		return mf.mockServer
@@ -38,13 +38,13 @@ func (mf *mockFactory) Configuration(nodeType string, log *logrus.Logger) config
 	}
 }
 
-func (ms *mockServer) Configure(host string, port uint, user, password string) error {
-	args := ms.Called(host, port, user, password)
+func (ms *mockServer) Configure() error {
+	args := ms.Called()
 	return args.Error(0)
 }
 
-func (ma *mockAgent) Configure(host string, port uint, user, password string) error {
-	args := ma.Called(host, port, user, password)
+func (ma *mockAgent) Configure() error {
+	args := ma.Called()
 	return args.Error(0)
 }
 
@@ -99,12 +99,7 @@ func TestConfig_run(t *testing.T) {
 		var output bytes.Buffer
 		var mockAgent mockAgent
 
-		mockAgent.On("Configure",
-			mock.AnythingOfType("string"),
-			mock.AnythingOfType("uint"),
-			mock.AnythingOfType("string"),
-			mock.AnythingOfType("string")).
-			Return(nil)
+		mockAgent.On("Configure").Return(nil)
 
 		configCmd := NewConfigTest(&output, &mockFactory{mockAgent: &mockAgent})
 
@@ -128,12 +123,7 @@ func TestConfig_run(t *testing.T) {
 		var output bytes.Buffer
 		var mockServer mockServer
 
-		mockServer.On("Configure",
-			mock.AnythingOfType("string"),
-			mock.AnythingOfType("uint"),
-			mock.AnythingOfType("string"),
-			mock.AnythingOfType("string")).
-			Return(nil)
+		mockServer.On("Configure").Return(nil)
 
 		configCmd := NewConfigTest(&output, &mockFactory{mockServer: &mockServer})
 
@@ -160,12 +150,7 @@ func TestConfig_run(t *testing.T) {
 		nodeType := "server"
 		mockErr := errors.New("mock error")
 
-		mockServer.On("Configure",
-			mock.AnythingOfType("string"),
-			mock.AnythingOfType("uint"),
-			mock.AnythingOfType("string"),
-			mock.AnythingOfType("string")).
-			Return(mockErr)
+		mockServer.On("Configure").Return(mockErr)
 
 		configCmd := NewConfigTest(&output, &mockFactory{mockServer: &mockServer})
 
