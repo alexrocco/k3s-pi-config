@@ -4,6 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Writer writes on log output
 type Writer struct {
 	Logger *logrus.Logger
 	Level  logrus.Level

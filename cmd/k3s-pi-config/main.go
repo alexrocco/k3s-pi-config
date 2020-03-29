@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/alexrocco/k3s-pi-config/internal/cmd"
 	"os"
+
+	"github.com/alexrocco/k3s-pi-config/internal/cmd"
 )
 
 func main() {

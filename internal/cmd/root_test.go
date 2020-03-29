@@ -16,7 +16,7 @@ func TestRoot_Command(t *testing.T) {
 			t.Error("cmd should not be nil")
 		}
 	})
-	
+
 	t.Run("Root command should output default message", func(t *testing.T) {
 		var output bytes.Buffer
 		rootCmd := NewRootTest(&output)

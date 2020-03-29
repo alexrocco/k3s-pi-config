@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"strings"
+	"testing"
+
 	"github.com/alexrocco/k3s-pi-config/internal/configpi"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
-	"strings"
-	"testing"
 )
 
 type (
@@ -116,9 +117,9 @@ func TestConfig_run(t *testing.T) {
 			t.Error("err should not be nil")
 		}
 
-		mockAgent.AssertNumberOfCalls(t,  "Configure", 1)
+		mockAgent.AssertNumberOfCalls(t, "Configure", 1)
 
-		if strings.Contains(output.String(), wrongNodeMsg) || strings.Contains(output.String(), wrongNodeMsg) {
+		if strings.Contains(output.String(), wrongNodeMsg) {
 			t.Error("validations outputs shouldn't be logged")
 		}
 	})
@@ -145,9 +146,9 @@ func TestConfig_run(t *testing.T) {
 			t.Error("err should not be nil")
 		}
 
-		mockServer.AssertNumberOfCalls(t,  "Configure", 1)
+		mockServer.AssertNumberOfCalls(t, "Configure", 1)
 
-		if strings.Contains(output.String(), wrongNodeMsg) || strings.Contains(output.String(), wrongNodeMsg) {
+		if strings.Contains(output.String(), wrongNodeMsg) {
 			t.Error("validations outputs shouldn't be logged")
 		}
 	})
@@ -177,7 +178,7 @@ func TestConfig_run(t *testing.T) {
 			t.Error("err should be nil")
 		}
 
-		mockServer.AssertNumberOfCalls(t,  "Configure", 1)
+		mockServer.AssertNumberOfCalls(t, "Configure", 1)
 
 		if !strings.Contains(output.String(), fmt.Sprintf(configErrorMsg, nodeType, mockErr)) {
 			t.Error("wrong error message")

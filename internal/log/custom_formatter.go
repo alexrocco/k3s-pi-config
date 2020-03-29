@@ -2,6 +2,8 @@ package log
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,10 +23,12 @@ type CustomFormatter struct {
 	logrus.TextFormatter
 }
 
+// Format formats the log to better show outputs on CLI
 func (cf *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	// Define log Level colors and Level text
 	var levelColor int
 	var levelText string
+
 	switch entry.Level {
 	case logrus.TraceLevel:
 		levelText = "TRACE"
@@ -50,6 +54,11 @@ func (cf *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	default:
 		levelText = "NONE"
 		levelColor = lightGray
+	}
+
+	// Removes all the break line at the end
+	for strings.HasSuffix(entry.Message, "\n") {
+		entry.Message = strings.TrimSuffix(entry.Message, "\n")
 	}
 
 	// Format the message

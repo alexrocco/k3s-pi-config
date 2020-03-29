@@ -3,9 +3,10 @@ package log
 import (
 	"bytes"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"testing"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 func Test_Writer_Write(t *testing.T) {

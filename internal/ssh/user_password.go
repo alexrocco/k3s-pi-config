@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
+	"net"
+
 	"github.com/alexrocco/k3s-pi-config/internal/log"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
-	"io"
-	"net"
 )
 
 // UserPassword holds SSH configuration to use user and password on SSH commands
@@ -32,6 +33,7 @@ func NewUserPassword(host string, port uint, user string, password string, log *
 	}
 }
 
+// Execute executes with user and password credentials
 func (up *UserPassword) Execute(command string) ([]byte, []byte, error) {
 	if len(command) == 0 {
 		return nil, nil, errors.New("command should not be empty")
@@ -48,6 +50,7 @@ func (up *UserPassword) Execute(command string) ([]byte, []byte, error) {
 	}
 
 	addr := fmt.Sprintf("%s:%d", up.host, up.port)
+
 	client, err := ssh.Dial("tcp", addr, config)
 	if err != nil {
 		return nil, nil, err
