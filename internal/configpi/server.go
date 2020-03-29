@@ -5,39 +5,33 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func NewServer(log *logrus.Logger) Configuration {
-	return &Server{log: log}
+const (
+	aptGetUpdate      = "sudo apt-get update"
+	aptGetUpgrade     = "sudo apt-get upgrade -y"
+	aptGetInstallCurl = "sudo apt-get install curl -y --no-install-recommends"
+	// Install k3s (https://rancher.com/docs/k3s/latest/en/installation/install-options/
+	installK3sServer = `curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s -`
+)
+
+func NewServer(input Input, log *logrus.Logger) Configuration {
+	sshExec := ssh.NewUserPassword(input.Host, input.Port, input.User, input.Password, log)
+
+	return &Server{sshExec: sshExec, log: log}
 }
 
 type Server struct {
-	log *logrus.Logger
+	sshExec ssh.Executor
+	log     *logrus.Logger
 }
 
-func (s *Server) Configure(host string, port uint, user, password string) error {
-	sshExec := ssh.NewUserPassword(host, port, user, password, s.log)
+func (s *Server) Configure() error {
+	commands := []string{aptGetUpdate, aptGetUpgrade, aptGetInstallCurl, installK3sServer}
 
-	// Update all the packages
-	_, _, err := sshExec.Execute("sudo apt-get update")
-	if err != nil {
-		return err
-	}
-
-	// Upgrade all the packages
-	_, _, err = sshExec.Execute("sudo apt-get upgrade -y")
-	if err != nil {
-		return err
-	}
-
-	// Install cURl to download k3s bash installation file
-	_, _, err = sshExec.Execute("sudo apt-get install curl -y --no-install-recommends")
-	if err != nil {
-		return err
-	}
-
-	// Install k3s (https://rancher.com/docs/k3s/latest/en/installation/install-options/)
-	_, _, err = sshExec.Execute(`curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s -`)
-	if err != nil {
-		return err
+	for _, cmd := range commands {
+		_, _, err := s.sshExec.Execute(cmd)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

@@ -74,7 +74,14 @@ func (c *config) run(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	config := c.configpiFactory.Configuration(c.nodeType, c.log)
+	input := configpi.Input{
+		Host:     c.flags.host,
+		Port:     c.flags.port,
+		User:     c.flags.user,
+		Password: c.flags.password,
+	}
+
+	config := c.configpiFactory.Configuration(c.nodeType, input, c.log)
 	if config == nil {
 		c.log.Error(wrongNodeMsg)
 
@@ -85,7 +92,7 @@ func (c *config) run(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	err := config.Configure(c.flags.host, c.flags.port, c.flags.user, c.flags.password)
+	err := config.Configure()
 	if err != nil {
 		c.log.Errorf(configErrorMsg, c.nodeType, err)
 
