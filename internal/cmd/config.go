@@ -32,7 +32,8 @@ func NewConfigTest(out io.Writer, configpiFactory configpi.Factory) Commander {
 	customLog.Out = out
 	customLog.Formatter = &log.CustomFormatter{Command: "config"}
 
-	return &config{log: customLog, configpiFactory: configpiFactory}
+
+	return &config{log: customLog, configpiFactory: configpiFactory, flags: &flags{}}
 }
 
 type config struct {

@@ -23,10 +23,10 @@ func TestRoot_Command(t *testing.T) {
 
 		cmd := rootCmd.Command()
 
-		_ = cmd.Flags().Set("host", "localhost")
-		_ = cmd.Flags().Set("port", "22")
-		_ = cmd.Flags().Set("user", "user")
-		_ = cmd.Flags().Set("password", "password")
+		_ = cmd.PersistentFlags().Set("host", "localhost")
+		_ = cmd.PersistentFlags().Set("port", "22")
+		_ = cmd.PersistentFlags().Set("user", "user")
+		_ = cmd.PersistentFlags().Set("password", "password")
 
 		err := cmd.Execute()
 		if err != nil {
@@ -44,9 +44,9 @@ func TestRoot_Command(t *testing.T) {
 		cmd := rootCmd.Command()
 
 		// Missing host flag
-		_ = cmd.Flags().Set("port", "22")
-		_ = cmd.Flags().Set("user", "user")
-		_ = cmd.Flags().Set("password", "password")
+		_ = cmd.PersistentFlags().Set("port", "22")
+		_ = cmd.PersistentFlags().Set("user", "user")
+		_ = cmd.PersistentFlags().Set("password", "password")
 
 		err := cmd.Execute()
 		if err == nil {

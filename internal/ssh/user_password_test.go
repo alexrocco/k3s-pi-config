@@ -82,7 +82,7 @@ func TestUserPassword_Execute(t *testing.T) {
 				command: "echo 123",
 			},
 			wantStdout: []byte("123\n"),
-			wantStderr: []byte(""),
+			wantStderr: nil,
 			wantErr:    false,
 		},
 		{
@@ -97,7 +97,7 @@ func TestUserPassword_Execute(t *testing.T) {
 			args: args{
 				command: "fake",
 			},
-			wantStdout: []byte(""),
+			wantStdout: nil,
 			wantStderr: []byte("bash: fake: command not found\n"),
 			wantErr:    true,
 		},
