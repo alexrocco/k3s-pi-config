@@ -15,7 +15,7 @@ const (
 )
 
 // NewRoot creates the root Commander
-func NewRoot() Commander {
+func NewRoot() *root {
 	customLog := logrus.New()
 	customLog.Formatter = &log.CustomFormatter{Command: "root"}
 
@@ -25,7 +25,7 @@ func NewRoot() Commander {
 }
 
 // NewRootTest creates a config command with a custom output to be used on unit tests
-func NewRootTest(out io.Writer) Commander {
+func NewRootTest(out io.Writer) *root {
 	customLog := logrus.New()
 	customLog.Out = out
 	customLog.Formatter = &log.CustomFormatter{Command: "config"}

@@ -17,7 +17,7 @@ const (
 )
 
 // NewConfig creates the config command
-func NewConfig(flags *flags) Commander {
+func NewConfig(flags *flags) *config {
 	customLog := logrus.New()
 	customLog.Formatter = &log.CustomFormatter{Command: "config"}
 
@@ -27,7 +27,7 @@ func NewConfig(flags *flags) Commander {
 }
 
 // NewConfigTest creates a config command with a custom output to be used on unit tests
-func NewConfigTest(out io.Writer, configpiFactory configpi.Factory) Commander {
+func NewConfigTest(out io.Writer, configpiFactory configpi.Factory) *config {
 	customLog := logrus.New()
 	customLog.Out = out
 	customLog.Formatter = &log.CustomFormatter{Command: "config"}

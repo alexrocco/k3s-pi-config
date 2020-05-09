@@ -13,18 +13,18 @@ const (
 	installK3sServer = `curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server" sh -s -`
 )
 
-func NewServer(input Input, log *logrus.Logger) Configuration {
+func NewServer(input Input, log *logrus.Logger) *server {
 	sshExec := ssh.NewUserPassword(input.Host, input.Port, input.User, input.Password, log)
 
-	return &Server{sshExec: sshExec, log: log}
+	return &server{sshExec: sshExec, log: log}
 }
 
-type Server struct {
+type server struct {
 	sshExec ssh.Executor
 	log     *logrus.Logger
 }
 
-func (s *Server) Configure() error {
+func (s *server) Configure() error {
 	commands := []string{aptGetUpdate, aptGetUpgrade, aptGetInstallCurl, installK3sServer}
 
 	for _, cmd := range commands {
