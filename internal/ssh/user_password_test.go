@@ -120,7 +120,7 @@ func TestUserPassword_Execute(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sshExec := &UserPassword{
+			sshExec := &userPassword{
 				host:     tt.fields.host,
 				port:     tt.fields.port,
 				user:     tt.fields.user,

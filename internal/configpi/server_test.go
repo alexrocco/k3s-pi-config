@@ -34,7 +34,7 @@ func TestServer_Configure(t *testing.T) {
 
 		mockSSH.On("Execute", mock.AnythingOfType("string")).Return([]byte("test"), []byte("test"), nil)
 
-		server := Server{sshExec: &mockSSH, log: logrus.New()}
+		server := server{sshExec: &mockSSH, log: logrus.New()}
 
 		err := server.Configure()
 
@@ -74,7 +74,7 @@ func TestServer_Configure(t *testing.T) {
 
 		mockSSH.On("Execute", mock.AnythingOfType("string")).Return([]byte("test"), []byte("test"), nil)
 
-		server := Server{sshExec: &mockSSH, log: logrus.New()}
+		server := server{sshExec: &mockSSH, log: logrus.New()}
 
 		err := server.Configure()
 

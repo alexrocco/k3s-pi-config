@@ -19,13 +19,13 @@ func Test_factory_Configuration(t *testing.T) {
 		want Configuration
 	}{
 		{
-			name: "Server configuration should return when nodeType is server",
+			name: "server configuration should return when nodeType is server",
 			args: args{
 				nodeType: "server",
 				input:    Input{},
 				log:      logrus.New(),
 			},
-			want: &Server{},
+			want: &server{},
 		},
 		{
 			name: "Agent configuration should return when nodeType is agent",

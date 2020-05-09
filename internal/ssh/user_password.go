@@ -12,8 +12,8 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-// UserPassword holds SSH configuration to use user and password on SSH commands
-type UserPassword struct {
+// userPassword holds SSH configuration to use user and password on SSH commands
+type userPassword struct {
 	host     string
 	port     uint
 	user     string
@@ -23,8 +23,8 @@ type UserPassword struct {
 }
 
 // NewUserPassword creates a Executor for user and password
-func NewUserPassword(host string, port uint, user string, password string, log *logrus.Logger) Executor {
-	return &UserPassword{
+func NewUserPassword(host string, port uint, user string, password string, log *logrus.Logger) *userPassword {
+	return &userPassword{
 		host:     host,
 		port:     port,
 		user:     user,
@@ -34,7 +34,7 @@ func NewUserPassword(host string, port uint, user string, password string, log *
 }
 
 // Execute executes with user and password credentials
-func (up *UserPassword) Execute(command string) ([]byte, []byte, error) {
+func (up *userPassword) Execute(command string) ([]byte, []byte, error) {
 	if len(command) == 0 {
 		return nil, nil, errors.New("command should not be empty")
 	}
